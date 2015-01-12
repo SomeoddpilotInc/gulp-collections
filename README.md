@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/alexsomeoddpilot/gulp-collections.svg?branch=v1.1.0)](https://travis-ci.org/alexsomeoddpilot/gulp-collections)
+[![Build Status](https://travis-ci.org/alexsomeoddpilot/gulp-collections.svg?branch=master)](https://travis-ci.org/alexsomeoddpilot/gulp-collections)
 [![Dependency Status](https://david-dm.org/alexsomeoddpilot/gulp-collections.svg)](https://david-dm.org/alexsomeoddpilot/gulp-collections)
 [![devDependency Status](https://david-dm.org/alexsomeoddpilot/gulp-collections/dev-status.svg)](https://david-dm.org/alexsomeoddpilot/gulp-collections#info=devDependencies)
 
