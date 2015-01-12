@@ -29,6 +29,10 @@ module.exports = function (fileGlobs) {
         );
       });
 
+      if (options.sortBy) {
+        collected = collected.sort(options.sortBy);
+      }
+
       if (options.count) {
         collected = collected.slice(0, options.count);
       }

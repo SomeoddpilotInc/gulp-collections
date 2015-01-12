@@ -11,7 +11,15 @@ describe("gulp-collections", function () {
     });
 
     var collector = collections({
-      tests: "tests/fixtures/*.md"
+      tests: "tests/fixtures/*.md",
+      options: {
+        count: 1,
+        sortBy: function (a, b) {
+          return (a.attributes.sort > b.attributes.sort) ?
+            -1 : (a.attributes.sort < b.attributes.sort) ?
+            1 : 0;
+        }
+      }
     });
 
     collector.write(fakeFile);
@@ -24,6 +32,7 @@ describe("gulp-collections", function () {
       assert.equal(firstItem.attributes.title, "Hello");
       assert.equal(firstItem.body, "Yo world. Sup.\n");
       assert.equal(firstItem.slug, "hello");
+      assert.equal(Object.keys(file.collections).length, 1);
 
       done();
     });
