@@ -6,7 +6,9 @@ var glob = require("glob");
 var _ = require("lodash");
 
 module.exports = function (fileGlobs) {
-  var options = fileGlobs.options;
+  fileGlobs = fileGlobs || {};
+
+  var options = (fileGlobs.options) ? fileGlobs.options : {};
 
   delete fileGlobs.options;
 
