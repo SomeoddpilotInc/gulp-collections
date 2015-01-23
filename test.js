@@ -46,4 +46,31 @@ describe("gulp-collections", function () {
       }
     }, testAssertions);
   });
+
+  it("should sort items", function (done) {
+    function testAssertions(file) {
+      assert(file.isStream());
+
+      var firstItem = file.collections.tests[1];
+
+      assert.equal(firstItem.attributes.title, "Hello");
+      assert.equal(firstItem.body, "Yo world. Sup.\n");
+      assert.equal(firstItem.slug, "hello");
+      assert.equal(Object.keys(file.collections).length, 1);
+
+      done();
+    }
+
+    test({
+      tests: {
+        glob: "tests/fixtures/*.md",
+        sortBy: function (a, b) {
+          return -1 * simpleSort(a, b);
+        }
+      },
+      options: {
+        count: 2
+      }
+    }, testAssertions);
+  });
 });
