@@ -11,9 +11,6 @@ function getFakeFile() {
 
 describe("gulp-collections", function () {
   it("should collect items", function (done) {
-
-    var fakeFile = getFakeFile();
-
     var collector = collections({
       tests: "tests/fixtures/*.md",
       options: {
@@ -26,7 +23,7 @@ describe("gulp-collections", function () {
       }
     });
 
-    collector.write(fakeFile);
+    collector.write(getFakeFile());
 
     collector.once("data", function (file) {
       assert(file.isStream());
