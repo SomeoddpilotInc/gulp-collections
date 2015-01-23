@@ -16,7 +16,11 @@ module.exports = function (fileGlobs) {
     var collections = {};
 
     Object.keys(fileGlobs).forEach(function (name) {
-      var files = glob.sync(fileGlobs[name]);
+      var collection = fileGlobs[name];
+
+      var fileGlob = (collection.glob) ? collection.glob : collection;
+
+      var files = glob.sync(fileGlob);
 
       var collected = files.map(function (filepath) {
         var contents = fs.readFileSync(filepath, "utf-8");
@@ -29,12 +33,16 @@ module.exports = function (fileGlobs) {
         );
       });
 
-      if (options.sortBy) {
-        collected = collected.sort(options.sortBy);
+      var sortBy = collection.sortBy || options.sortBy || null;
+
+      if (sortBy) {
+        collected = collected.sort(sortBy);
       }
 
-      if (options.count) {
-        collected = collected.slice(0, options.count);
+      var count = collection.count || options.count || null;
+
+      if (count) {
+        collected = collected.slice(0, count);
       }
 
       collections[name] = collected;
