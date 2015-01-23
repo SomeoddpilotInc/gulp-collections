@@ -3,12 +3,16 @@ var es = require("event-stream");
 var File = require("vinyl");
 var collections = require("./");
 
+function getFakeFile() {
+  return new File({
+    contents: es.readArray(["stream", "with", "those", "contents"])
+  });
+}
+
 describe("gulp-collections", function () {
   it("should collect items", function (done) {
 
-    var fakeFile = new File({
-      contents: es.readArray(["stream", "with", "those", "contents"])
-    });
+    var fakeFile = getFakeFile();
 
     var collector = collections({
       tests: "tests/fixtures/*.md",
