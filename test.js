@@ -73,4 +73,20 @@ describe("gulp-collections", function () {
       }
     }, testAssertions);
   });
+
+  it("should group nested items", function (done) {
+    function testAssertions(file) {
+      assert(file.isStream());
+
+      assert.equal(file.collections.nested.length, 2);
+
+      done();
+    }
+
+    test({
+      nested: {
+        glob: "tests/fixtures/nested/**/!(index).md"
+      }
+    }, testAssertions);
+  });
 });

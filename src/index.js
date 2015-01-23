@@ -27,6 +27,7 @@ module.exports = function (fileGlobs) {
 
         return _.extend(
           {
+            group: path.dirname(filepath).split("/").pop(),
             slug: path.basename(filepath, path.extname(filepath))
           },
           frontMatter(contents)
@@ -43,6 +44,14 @@ module.exports = function (fileGlobs) {
 
       if (count) {
         collected = collected.slice(0, count);
+      }
+
+      var group = collection.group || options.group || false;
+
+      if (group) {
+        collected = _.groupBy(collected, function (item) {
+          return item.group;
+        });
       }
 
       collections[name] = collected;
