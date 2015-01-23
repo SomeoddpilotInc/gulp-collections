@@ -17,6 +17,12 @@ function test(options, assertions) {
   collector.once("data", assertions);
 }
 
+function simpleSort(a, b) {
+  return (a.attributes.sort > b.attributes.sort) ?
+    -1 : (a.attributes.sort < b.attributes.sort) ?
+    1 : 0;
+}
+
 describe("gulp-collections", function () {
   it("should collect items", function (done) {
     function testAssertions(file) {
@@ -36,11 +42,7 @@ describe("gulp-collections", function () {
       tests: "tests/fixtures/*.md",
       options: {
         count: 1,
-        sortBy: function (a, b) {
-          return (a.attributes.sort > b.attributes.sort) ?
-            -1 : (a.attributes.sort < b.attributes.sort) ?
-            1 : 0;
-        }
+        sortBy: simpleSort
       }
     }, testAssertions);
   });
