@@ -4,7 +4,7 @@ var File = require("vinyl");
 var collections = require("./");
 
 describe("gulp-collections", function () {
-  it("should assert", function (done) {
+  it("should collect items", function (done) {
 
     var fakeFile = new File({
       contents: es.readArray(["stream", "with", "those", "contents"])
