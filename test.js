@@ -9,23 +9,17 @@ function getFakeFile() {
   });
 }
 
+function test(options, assertions) {
+  var collector = collections(options);
+
+  collector.write(getFakeFile());
+
+  collector.once("data", assertions);
+}
+
 describe("gulp-collections", function () {
   it("should collect items", function (done) {
-    var collector = collections({
-      tests: "tests/fixtures/*.md",
-      options: {
-        count: 1,
-        sortBy: function (a, b) {
-          return (a.attributes.sort > b.attributes.sort) ?
-            -1 : (a.attributes.sort < b.attributes.sort) ?
-            1 : 0;
-        }
-      }
-    });
-
-    collector.write(getFakeFile());
-
-    collector.once("data", function (file) {
+    function testAssertions(file) {
       assert(file.isStream());
 
       var firstItem = file.collections.tests[0];
@@ -36,6 +30,18 @@ describe("gulp-collections", function () {
       assert.equal(Object.keys(file.collections).length, 1);
 
       done();
-    });
+    }
+
+    test({
+      tests: "tests/fixtures/*.md",
+      options: {
+        count: 1,
+        sortBy: function (a, b) {
+          return (a.attributes.sort > b.attributes.sort) ?
+            -1 : (a.attributes.sort < b.attributes.sort) ?
+            1 : 0;
+        }
+      }
+    }, testAssertions);
   });
 });
