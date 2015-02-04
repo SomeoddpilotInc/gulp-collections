@@ -39,7 +39,9 @@ describe("gulp-collections", function () {
     }
 
     test({
-      tests: "tests/fixtures/*.md",
+      globs: {
+        tests: "tests/fixtures/*.md"
+      },
       options: {
         count: 1,
         sortBy: simpleSort
@@ -62,10 +64,12 @@ describe("gulp-collections", function () {
     }
 
     test({
-      tests: {
-        glob: "tests/fixtures/*.md",
-        sortBy: function (a, b) {
-          return -1 * simpleSort(a, b);
+      globs: {
+        tests: {
+          glob: "tests/fixtures/*.md",
+          sortBy: function (a, b) {
+            return -1 * simpleSort(a, b);
+          }
         }
       },
       options: {

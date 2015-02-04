@@ -5,12 +5,10 @@ var through = require("through2");
 var glob = require("glob");
 var _ = require("lodash");
 
-module.exports = function (fileGlobs) {
-  fileGlobs = fileGlobs || {};
+module.exports = function (options) {
+  var fileGlobs = options.globs || {};
 
-  var options = (fileGlobs.options) ? fileGlobs.options : {};
-
-  delete fileGlobs.options;
+  options = options || {};
 
   function collectionsTransform(file, enc, callback) {
     var collections = {};
