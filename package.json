@@ -1,7 +1,7 @@
 {
   "name": "gulp-collections",
   "version": "1.3.0",
-  "description": "",
+  "description": "A gulp utility for gathering collections and adding to file metadata",
   "main": "src/index.js",
   "scripts": {
     "test": "mocha"
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/alexsomeoddpilot/gulp-collections.git"
   },
-  "author": "",
+  "author": "Alex Robertson <alex@someoddpilot.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/alexsomeoddpilot/gulp-collections/issues"
