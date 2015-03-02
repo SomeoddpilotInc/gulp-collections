@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/alexsomeoddpilot/gulp-collections",
   "dependencies": {
-    "front-matter": "^0.2.0",
+    "front-matter": "^1.0.0",
     "glob": "^4.3.2",
     "lodash": "^3.1.0",
     "through2": "^0.6.3"
