@@ -4,7 +4,7 @@
   "description": "A gulp utility for gathering collections and adding to file metadata",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha -C"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
   "homepage": "https://github.com/alexsomeoddpilot/gulp-collections",
   "dependencies": {
     "front-matter": "^1.0.0",
-    "glob": "^4.3.2",
+    "glob": "^5.0.3",
     "lodash": "^3.1.0",
     "through2": "^0.6.3"
   },
