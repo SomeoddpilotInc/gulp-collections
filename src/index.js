@@ -40,6 +40,10 @@ function getFiles(fileGlob) {
   });
 }
 
+/**
+ * @param {string[]} files array of filepaths
+ * @returns {Promise} promise resolved when all fileinfo has been retrieved
+ */
 function allPromisedMapFiles(files) {
   return Promise.all(files.map(mapFiles));
 }
