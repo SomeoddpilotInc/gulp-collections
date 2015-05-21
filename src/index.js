@@ -16,12 +16,10 @@ function mapFiles(filepath) {
   );
 }
 
-function forEachFileGlob(collections, fileGlobs, options, name) {
-  var collection = fileGlobs[name];
-
+function forEachFileGlob(fileGlobs, options, result, collection, name) {
   var files = glob.sync(collection.glob || collection);
 
-  collections[name] = files
+  result[name] = files
     .map(mapFiles)
     .sort(function (a, b) {
       var sortBy = collection.sortBy || options.sortBy || null;
@@ -41,12 +39,10 @@ module.exports = function (options) {
   var fileGlobs = options.globs || {};
 
   function collectionsTransform(file, enc, callback) {
-    var collections = {};
-
-    Object.keys(fileGlobs)
-      .forEach(forEachFileGlob.bind(this, collections, fileGlobs, options || {}));
-
-    file.collections = collections;
+    file.collections = _.transform(
+      fileGlobs,
+      forEachFileGlob.bind(this, fileGlobs, options || {})
+    );
 
     this.push(file);
 
