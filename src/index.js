@@ -7,11 +7,11 @@ var _ = require("lodash");
 
 /**
  * @param {string} filepath
- * @returns {Object} file info
+ * @returns {Promise} promise which resolves to file info
  */
 function mapFiles(filepath) {
   return new Promise(function (resolve, reject) {
-    fs.readFile(filepath, "utf-8", function (err, contents) {
+    fs.readFile(filepath, "utf-8", function onFile(err, contents) {
       if (err) {
         return reject(err);
       }
@@ -25,15 +25,23 @@ function mapFiles(filepath) {
   });
 }
 
+/**
+ * @param {string} fileGlob glob for files
+ * @returns {Promise} promise which resolves to file paths
+ */
 function getFiles(fileGlob) {
   return new Promise(function (resolve, reject) {
-    glob(fileGlob, function (err, globs) {
+    glob(fileGlob, function onGlob(err, globs) {
       if (err) {
         return reject(err);
       }
       resolve(globs);
     });
   });
+}
+
+function allPromisedMapFiles(files) {
+  return Promise.all(files.map(mapFiles));
 }
 
 /**
@@ -47,27 +55,28 @@ function getFiles(fileGlob) {
  * @param {string}   name - name of collection
  */
 function forEachFileGlob(options, collection, name) {
-  return getFiles(collection.glob || collection)
-    .then(function (files) {
-      return Promise.all(files.map(mapFiles));
-    })
-    .then(function (files) {
-      return files
-        .sort(function sortCollection(a, b) {
-          var sortBy = collection.sortBy || options.sortBy || null;
+  function sortCollection(a, b) {
+    var sortBy = collection.sortBy || options.sortBy || null;
 
-          if (typeof sortBy !== 'function') {
-            return -1;
-          }
-          return sortBy(a, b);
-        })
+    if (typeof sortBy !== 'function') {
+      return -1;
+    }
+    return sortBy(a, b);
+  }
+
+  return getFiles(collection.glob || collection)
+    .then(allPromisedMapFiles)
+    .then(function sortNSlice(files) {
+      return files
+        .sort(sortCollection)
         .slice(
           0,
           collection.count || options.count || undefined
         );
     })
-    .then(function (files) {
+    .then(function setName(files) {
       files.name = name;
+
       return files;
     });
 }
