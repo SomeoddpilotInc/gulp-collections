@@ -5,6 +5,10 @@ var through = require("through2");
 var glob = require("glob");
 var _ = require("lodash");
 
+/**
+ * @param {string} filepath
+ * @returns {Object} file info
+ */
 function mapFiles(filepath) {
   var contents = fs.readFileSync(filepath, "utf-8");
 
@@ -16,12 +20,23 @@ function mapFiles(filepath) {
   );
 }
 
-function forEachFileGlob(fileGlobs, options, result, collection, name) {
+/**
+ * @param {Object}   options - options
+ * @param {Function} options.sortBy - fallback sorting function
+ * @param {number}   options.number - number of items to include
+ * @param {Object}   result - resulting object
+ * @param {Object}   collection - collection options
+ * @param {string}   collection.glob - glob for collection
+ * @param {Function} collection.sortBy - main sorting function
+ * @param {number}   collection.number - number of items to include
+ * @param {string}   name - name of collection
+ */
+function forEachFileGlob(options, result, collection, name) {
   var files = glob.sync(collection.glob || collection);
 
   result[name] = files
     .map(mapFiles)
-    .sort(function (a, b) {
+    .sort(function sortCollection(a, b) {
       var sortBy = collection.sortBy || options.sortBy || null;
 
       if (typeof sortBy !== 'function') {
@@ -31,17 +46,21 @@ function forEachFileGlob(fileGlobs, options, result, collection, name) {
     })
     .slice(
       0,
-      collection.count || options.count || files.length
+      collection.count || options.count || undefined
     );
 }
 
-module.exports = function (options) {
+/**
+ * @param {Object} options options set
+ * @param {Object} options.globs globs to get collections from
+ */
+module.exports = function gulpCollections(options) {
   var fileGlobs = options.globs || {};
 
   function collectionsTransform(file, enc, callback) {
     file.collections = _.transform(
       fileGlobs,
-      forEachFileGlob.bind(this, fileGlobs, options || {})
+      forEachFileGlob.bind(this, options || {})
     );
 
     this.push(file);
