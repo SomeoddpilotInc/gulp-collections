@@ -4,6 +4,7 @@ var frontMatter = require("front-matter");
 var through = require("through2");
 var glob = require("glob");
 var _ = require("lodash");
+var Promise = require('q').Promise;
 
 /**
  * @param {string} filepath
