@@ -10,44 +10,66 @@ var _ = require("lodash");
  * @returns {Object} file info
  */
 function mapFiles(filepath) {
-  var contents = fs.readFileSync(filepath, "utf-8");
+  return new Promise(function (resolve, reject) {
+    fs.readFile(filepath, "utf-8", function (err, contents) {
+      if (err) {
+        return reject(err);
+      }
+      resolve(_.extend(
+        {
+          slug: path.basename(filepath, path.extname(filepath))
+        },
+        frontMatter(contents)
+      ));
+    });
+  });
+}
 
-  return _.extend(
-    {
-      slug: path.basename(filepath, path.extname(filepath))
-    },
-    frontMatter(contents)
-  );
+function getFiles(fileGlob) {
+  return new Promise(function (resolve, reject) {
+    glob(fileGlob, function (err, globs) {
+      if (err) {
+        return reject(err);
+      }
+      resolve(globs);
+    });
+  });
 }
 
 /**
  * @param {Object}   options - options
  * @param {Function} options.sortBy - fallback sorting function
  * @param {number}   options.number - number of items to include
- * @param {Object}   result - resulting object
  * @param {Object}   collection - collection options
  * @param {string}   collection.glob - glob for collection
  * @param {Function} collection.sortBy - main sorting function
  * @param {number}   collection.number - number of items to include
  * @param {string}   name - name of collection
  */
-function forEachFileGlob(options, result, collection, name) {
-  var files = glob.sync(collection.glob || collection);
-
-  result[name] = files
-    .map(mapFiles)
-    .sort(function sortCollection(a, b) {
-      var sortBy = collection.sortBy || options.sortBy || null;
-
-      if (typeof sortBy !== 'function') {
-        return -1;
-      }
-      return sortBy(a, b);
+function forEachFileGlob(options, collection, name) {
+  return getFiles(collection.glob || collection)
+    .then(function (files) {
+      return Promise.all(files.map(mapFiles));
     })
-    .slice(
-      0,
-      collection.count || options.count || undefined
-    );
+    .then(function (files) {
+      return files
+        .sort(function sortCollection(a, b) {
+          var sortBy = collection.sortBy || options.sortBy || null;
+
+          if (typeof sortBy !== 'function') {
+            return -1;
+          }
+          return sortBy(a, b);
+        })
+        .slice(
+          0,
+          collection.count || options.count || undefined
+        );
+    })
+    .then(function (files) {
+      files.name = name;
+      return files;
+    });
 }
 
 /**
@@ -58,14 +80,22 @@ module.exports = function gulpCollections(options) {
   var fileGlobs = options.globs || {};
 
   function collectionsTransform(file, enc, callback) {
-    file.collections = _.transform(
-      fileGlobs,
-      forEachFileGlob.bind(this, options || {})
-    );
+    Promise.all(
+      _.map(fileGlobs, forEachFileGlob.bind(this, options || {}))
+    )
+    .then(function (collections) {
+      return _.transform(collections, function (result, collection) {
+        result[collection.name] = collection;
+      });
+    })
+    .then(function (collections) {
+      file.collections = collections;
 
-    this.push(file);
+      this.push(file);
 
-    callback(null, file);
+      callback(null, file);
+    }.bind(this))
+    .catch(callback);
   }
 
   return through.obj(collectionsTransform);

@@ -9,12 +9,13 @@ function getFakeFile() {
   });
 }
 
-function test(options, assertions) {
+function test(options, assertions, done) {
   var collector = collections(options);
 
   collector.write(getFakeFile());
 
   collector.once("data", assertions);
+  collector.once('error', done);
 }
 
 function simpleSort(a, b) {
@@ -46,7 +47,7 @@ describe("gulp-collections", function () {
         count: 1,
         sortBy: simpleSort
       }
-    }, testAssertions);
+    }, testAssertions, done);
   });
 
   it("should sort items", function (done) {
@@ -75,6 +76,6 @@ describe("gulp-collections", function () {
       options: {
         count: 2
       }
-    }, testAssertions);
+    }, testAssertions, done);
   });
 });
